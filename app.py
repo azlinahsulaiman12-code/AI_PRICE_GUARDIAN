@@ -94,6 +94,14 @@ prices["date"] = pd.to_datetime(
     errors="coerce"
 )
 
+# Make sure lookup keys have the same data type
+prices["item_code"] = prices["item_code"].astype(str)
+items["item_code"] = items["item_code"].astype(str)
+
+prices["premise_code"] = prices["premise_code"].astype(str)
+premises["premise_code"] = premises["premise_code"].astype(str)
+
+
 # Merge item information
 prices = prices.merge(
     items[
@@ -101,10 +109,48 @@ prices = prices.merge(
             "item_code",
             "item"
         ]
-    ],
+    ].drop_duplicates("item_code"),
     on="item_code",
     how="left"
 )
+
+
+# Merge premise information
+prices = prices.merge(
+    premises[
+        [
+            "premise_code",
+            "state",
+            "district",
+            "premise_type"
+        ]
+    ].drop_duplicates("premise_code"),
+    on="premise_code",
+    how="left"
+)
+
+
+# Check that lookup information was successfully added
+if prices["item"].notna().sum() == 0:
+
+    st.error(
+        "Item information could not be matched with the price data. "
+        "Please check the item_code values in latest_prices.csv "
+        "and lookup_item.csv."
+    )
+
+    st.stop()
+
+
+if prices["district"].notna().sum() == 0:
+
+    st.error(
+        "Premise information could not be matched with the price data. "
+        "Please check the premise_code values in latest_prices.csv "
+        "and lookup_premise.csv."
+    )
+
+    st.stop()
 
 # Merge premise information
 prices = prices.merge(
