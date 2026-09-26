@@ -541,11 +541,11 @@ if predict_button:
 
 
         comparison_columns = [
-            "premise_code",
-            "premise_type",
-            "price",
-            "date"
-        ]
+    "premise",
+    "premise_type",
+    "price",
+    "date"
+]
 
 
         comparison = filtered[
