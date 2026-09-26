@@ -158,6 +158,7 @@ item_lookup = items[
 
 required_premise_columns = [
     "premise_code",
+    "premise",
     "state",
     "district",
     "premise_type"
