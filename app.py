@@ -536,34 +536,54 @@ if predict_button:
         # ====================================================
 
         st.subheader(
-            "🏪 Price Comparison in Selected District"
-        )
+    "🏪 Price Comparison in Selected District"
+)
 
+# Keep premise_code temporarily so we can identify
+# each individual shop/hypermarket correctly
+comparison = filtered[
+    [
+        "premise_code",
+        "premise",
+        "premise_type",
+        "price",
+        "date"
+    ]
+].copy()
 
-        comparison_columns = [
-    "premise",
-    "premise_type",
-    "price",
-    "date"
+# Sort from lowest to highest price
+comparison = comparison.sort_values(
+    "price"
+)
+
+# Keep one record for each individual premise
+comparison = comparison.drop_duplicates(
+    subset=["premise_code"]
+)
+
+# Show the 10 lowest-price premises
+comparison = comparison.head(10)
+
+# Round price
+comparison["price"] = comparison[
+    "price"
+].round(2)
+
+# Hide the technical premise_code from the user
+comparison = comparison[
+    [
+        "premise",
+        "premise_type",
+        "price",
+        "date"
+    ]
 ]
 
-
-        comparison = filtered[
-            comparison_columns
-        ].copy()
-
-
-        comparison = comparison.sort_values(
-            "price"
-        )
-
-
-        comparison = comparison.drop_duplicates(
-            "premise_code"
-        )
-
-
-        comparison = comparison.head(10)
+st.dataframe(
+    comparison,
+    use_container_width=True,
+    hide_index=True
+)
 
 
         comparison["price"] = comparison[
